@@ -843,6 +843,10 @@ const display = document.getElementById('display');
       display.value = display.value.slice(0, -1);
     }
     // Allow clear (Escape key)
+    else if (key === 'Escape') {
+      clearDisplay();
+    }
+	  // Allow clear (Delete key)
     else if (key === 'Delete') {
       clearDisplay();
     }
