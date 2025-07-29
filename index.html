@@ -126,8 +126,13 @@
       background-color: #007bff;
       color: white;
     }
+    
+    .sub-tab-content.active {
+      display: block;
+    }
 
     .sub-tab-content {
+      display: none;
       padding: 15px;
       background-color: #fff;
       border-radius: 5px;
@@ -874,8 +879,8 @@ const display = document.getElementById('display');
 
 function toggleSubTab(subTab) {
   const content = subTab.nextElementSibling;
-  const headers = subTab.parentElement.querySelectorAll('.sub-tab-header');
-  const contents = subTab.parentElement.querySelectorAll('.sub-tab-content');
+  const headers = subTab.closest('.tab-content').querySelectorAll('.sub-tab-header');
+  const contents = subTab.closest('.tab-content').querySelectorAll('.sub-tab-content');
 
   // If the clicked sub-tab is already active, close it
   if (subTab.classList.contains('active')) {
