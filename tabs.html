@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Everything Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      padding: 30px;
+      margin: 0;
+    }
+    
+    .calculator-ui {
+      margin: 0 auto;
+      background-color: #ddd;
+      padding: 20px;
+      border-radius: 7px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 960px;
+    }
+    
+	.display {
+      width: 940px;
+      height: 25px;
+      font-size: 20px;
+      text-align: right;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 0px solid #f9f9f9;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    
+    button {
+      padding: 15px;
+      font-size: 20px;
+      transition: background 0.3s;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #d0d0d0;
+    }
+    
+    .operator {
+      background-color: #f9a825;
+    }
+    
+    .equal {
+      background-color: #4caf50;
+      grid-column: span 2;
+    }
+    
+    .clear {
+      background-color: #f44336;
+    }
+    
+    .tab-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .tab {
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab-header {
+      background-color: #e0e0e0;
+      padding: 15px 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .tab-header:hover {
+      background-color: #d0d0d0;
+    }
+
+    .tab-header.active {
+      background-color: #ffffff;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-top: 1px solid #ddd;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .sub-tab {
+      margin-bottom: 10px;
+    }
+
+    .sub-tab-header {
+      background-color: #e9e9e9;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .sub-tab-header:hover {
+      background-color: #d9d9d9;
+    }
+
+    .sub-tab-header.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .sub-tab-content {
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .calculator {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .calculator label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .calculator input {
+      padding: 8px;
+      width: 100%;
+      max-width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .calculator button {
+      padding: 10px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .calculator button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="calculator-ui">
+    <input type="text" class="display" id="display" disabled />
+    <div class="buttons">
+      <button class="clear" onclick="clearDisplay()">Clear</button>
+      <button onclick="appendValue('(')">(</button>
+      <button onclick="appendValue(')')">)</button>
+      <button class="operator" onclick="appendValue('/')">÷</button>
+      <button onclick="appendValue('7')">7</button>
+      <button onclick="appendValue('8')">8</button>
+      <button onclick="appendValue('9')">9</button>
+      <button class="operator" onclick="appendValue('*')">×</button>
+      <button onclick="appendValue('4')">4</button>
+      <button onclick="appendValue('5')">5</button>
+      <button onclick="appendValue('6')">6</button>
+      <button class="operator" onclick="appendValue('-')">-</button>
+      <button onclick="appendValue('1')">1</button>
+      <button onclick="appendValue('2')">2</button>
+      <button onclick="appendValue('3')">3</button>
+      <button class="operator" onclick="appendValue('+')">+</button>
+      <button onclick="appendValue('0')">0</button>
+      <button onclick="appendValue('.')">.</button>
+      <button class="equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+  
+  
+<div class="tab-container">
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">Unit Converters</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Distance</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Area</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Volume</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Weight</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Temperature</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Time</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Numeric Base</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Data Storage</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Data Transfer</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Speed</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Acceleration</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Angle</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Pressure</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Energy Storage</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Power</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Force</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Torque</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Volumetric Flow</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!--■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-->
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">2D Geometry</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Triangle</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Square</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Pentagon</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Hexagon</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Heptagon</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Octagon</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Nonagon</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Decagon</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Rectangle</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Circle</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Oval</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Trapezoid</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Rhombus</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">arc</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!--■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-->
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">3D Geometry</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Pyramid</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Cone</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Cube</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Rectangular Prisim</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Pyramid Frustum</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Cone Frustum</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Cylinder</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Sphere</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Hemisphere</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Sphere Segment</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Ellipsoid</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!--■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-->
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">Algebra</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Percentage</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Average</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Proportion</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Ratio</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Fractions</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">GCF</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">LCM</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Combinations</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Permutations</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!--■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-->
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">Money</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">TAX</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Loan</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Interest</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!--■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-->
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">Time</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Age</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Date</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Time</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!--■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■-->
+  <div class="tab">
+    <div class="tab-header" onclick="toggleTab(this)">Misc</div>
+    <div class="tab-content">
+      <!-- Sub Tabs -->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Random Number Generator</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Car Range</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!--―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――-->
+      <div class="sub-tab">
+        <div class="sub-tab-header" onclick="toggleSubTab(this)">Ohm`s Law</div>
+        <div class="sub-tab-content">
+          <div class="calculator">
+            <!-- gui goes here -->
+          </div>
+        </div>
+      </div>
+      <!-- Add more sub-tabs here -->
+    </div>
+  </div>
+  <!-- Add more main tabs here -->
+</div>
+
+<script>
+
+const display = document.getElementById('display');
+
+  function appendValue(value) {
+    display.value += value;
+  }
+
+  function clearDisplay() {
+    display.value = '';
+  }
+
+  function calculate() {
+    try {
+      display.value = eval(display.value);
+    } catch (e) {
+      display.value = 'Error';
+    }
+  }
+
+  // Handle keyboard input
+  document.addEventListener('keydown', function (e) {
+    const key = e.key;
+
+    // Allow digits (from top row and numpad)
+    if (/^[0-9]$/.test(key)) {
+      appendValue(key);
+    }
+    // Allow operators (+, -, *, /)
+    else if (['+', '-', '*', '/'].includes(key)) {
+      appendValue(key);
+    }
+    // Allow decimal point
+    else if (key === '.') {
+      appendValue('.');
+    }
+    // Allow equals or Enter to evaluate
+    else if (key === '=' || key === 'Enter') {
+      calculate();
+    }
+    // Allow backspace
+    else if (key === 'Backspace') {
+      display.value = display.value.slice(0, -1);
+    }
+    // Allow clear (Escape key)
+    else if (key === 'Delete') {
+      clearDisplay();
+    }
+  });
+
+
+  function toggleTab(tab) {
+  const content = tab.nextElementSibling;
+  const headers = tab.parentElement.querySelectorAll('.tab-header');
+  const contents = tab.parentElement.querySelectorAll('.tab-content');
+
+  // If the clicked tab is already active, close it (toggle off)
+  if (tab.classList.contains('active')) {
+    tab.classList.remove('active');
+    content.classList.remove('active');
+  } else {
+    // Otherwise, activate this tab and deactivate others
+    headers.forEach(h => h.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+
+    tab.classList.add('active');
+    content.classList.add('active');
+  }
+}
+
+function toggleSubTab(subTab) {
+  const content = subTab.nextElementSibling;
+  const headers = subTab.parentElement.querySelectorAll('.sub-tab-header');
+  const contents = subTab.parentElement.querySelectorAll('.sub-tab-content');
+
+  // If the clicked sub-tab is already active, close it
+  if (subTab.classList.contains('active')) {
+    subTab.classList.remove('active');
+    content.classList.remove('active');
+  } else {
+    // Otherwise, activate this sub-tab and deactivate others
+    headers.forEach(h => h.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+
+    subTab.classList.add('active');
+    content.classList.add('active');
+  }
+}   
+  //functions go here
+
+</script>
+
+</body>
+</html>
